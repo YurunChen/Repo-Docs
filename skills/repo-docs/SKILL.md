@@ -42,6 +42,8 @@ Keep the routing narrow. `SKILL.md` defines the contract; topic files carry the 
 ## Core Laws
 
 - Behavior before inventory: teach one real workflow, request, task, failure, or data path before describing the tree.
+- Representative case before abstraction: when a module explains a mechanism whose meaning depends on inputs, state changes, outputs, decisions, or boundaries, include a compact evidence-backed case or explicitly state why a case would mislead.
+- Shape follows reader need: prose explains why; structure shows what. Use tables, lists, timelines, fenced blocks, or flowcharts when they make comparisons, cases, sequences, commands, or lookup easier to scan.
 - Evidence before claims: inspect source, tests, config, data, commands, or artifacts before writing durable statements.
 - One durable fact, one home: reader knowledge and details live in `modules/`; fixed generated audit artifacts live in `references/`; terms live in `glossary.md`; guide history lives in `change-log.md`.
 - Sync only when the guide would mislead: ordinary repo questions require a foreground decision, not automatic doc edits.
@@ -71,7 +73,7 @@ Use the smallest package that teaches the repo honestly.
 | --- | --- |
 | `README.md` | Orient the reader and point to the first useful path. |
 | `walkthroughs/one-real-run.md` | Follow one real behavior end to end with numbered `## Step N: behavior` headings. |
-| `modules/<concept>.md` | Explain one durable concept named by the walkthrough, including details, examples, call/data shapes, commands, fields, caveats, and verification hooks needed to understand it. |
+| `modules/<concept>.md` | Explain one durable concept named by the walkthrough, including details, representative cases, call/data shapes, commands, fields, caveats, and verification hooks needed to understand it. |
 | `references/source-evidence.md` | Fixed generated evidence base: traversal log, coverage notes, claim/evidence/confidence/caveat rows, and source material later pages may use. |
 | `references/quality-review.md` | Optional fixed generated audit note for source-heavy, high-risk, generated, or handoff-sensitive guides. |
 | `glossary.md` | Three columns only: `Term | Plain meaning | Further reading`. |
@@ -126,6 +128,7 @@ Use [WRITING.md](WRITING.md) for voice and explanation rules. The short version:
 - Start with the situation a reader can recognize, then explain the reason, mechanism, check, and caveat.
 - Keep README and walkthrough openings low in code names.
 - Never let a path, function, field, or metric carry the explanation.
+- Follow the display-shape router in [PAGE_RULES.md](PAGE_RULES.md#markdown-display-protocol) when structure helps the reader scan.
 - Use flowcharts only for phase handoffs, branching paths, or state changes.
 - Put page-level evidence status at the end of narrative pages: `Evidence status: Confirmed unless noted.`
 
@@ -140,6 +143,7 @@ Before delivery, confirm:
 - `references/source-evidence.md` exists and includes Pass 1/Pass 2 traversal rows, coverage/exclusion notes, a falsifying check, a likely reader follow-up, and a `Claim | Evidence | Confidence | Caveat | Used by` audit table.
 - Optional `references/quality-review.md`, when present, stays an audit note rather than a second walkthrough.
 - Modules carry the knowledge and details a reader needs to understand the repo; `references/` contains only fixed generated artifacts.
+- Mechanism modules include a representative case for the key input, state change, output, decision, or boundary, unless the page states why a case would be misleading or unsupported by evidence.
 - Project agent instruction Markdown contains the short `Repo docs` routing block, or the build explicitly explains why it was not written.
 - `change-log.md` records meaningful guide work and includes `Synced through <sha>` when git is available.
 - The validator ran, or the reason it could not run is stated.

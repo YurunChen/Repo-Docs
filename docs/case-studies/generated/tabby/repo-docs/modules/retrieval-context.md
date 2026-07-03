@@ -20,6 +20,13 @@ Indexed search is guarded by three checks:
 
 The prompt builder then prepends snippets as line comments when the language has a comment marker. The tests show Python snippets becoming `# Path: ...` blocks before the original prefix. If the language lacks a line-comment marker, snippet rewriting is skipped rather than forcing an unsafe syntax.
 
+Representative case:
+
+| Input condition | Resulting prompt state |
+| --- | --- |
+| Python request with collected snippet `res_1 = invoke_function_1(n)` from `a1.py` | The snippet is prepended as `# Path: a1.py` and `# res_1 = invoke_function_1(n)` before the user's prefix. |
+| Language has no supported line-comment marker | The original prefix remains usable because snippet comment rewriting is skipped. |
+
 ```text
 # Path: a1.py
 # res_1 = invoke_function_1(n)

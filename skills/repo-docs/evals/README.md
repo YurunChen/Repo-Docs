@@ -18,8 +18,10 @@ python skills/repo-docs/evals/run_eval.py
 | `sync-decision-rules` | Skill rule files | `none`, `answer-only`, `foreground patch`, and `background sync` appear in `SKILL.md`, `SYNC_RULES.md`, and root-agent rules | Ordinary repo questions have an answer-only path. |
 | `answer-only-docs` | Skill rule files | Sync rules explicitly say ordinary repo questions are not automatic doc edits | The trigger policy will not surprise users with unnecessary patches. |
 | `stable-module-gap` | Skill rule files | Stable understanding gaps route to add/refine/merge modules | Knowledge has one durable reader home. |
+| `display-shape-router` | Skill rule files | Entry and page rules preserve prose/structure routing and the wall-of-text guard | Reader understanding drives tables, lists, timelines, code blocks, and prose. |
 | `strict-references` | A fixture with an extra reference page | Validator fails with a fixed references-scope error | Contract/schema/catalogue content belongs in modules. |
 | `code-heavy-opening` | A fixture with a code-name-heavy opening | Validator returns 0 errors and emits the opening-density warning | The warning is useful and low noise. |
+| `module-missing-case` | A mechanism module with payload/state language but no representative case | Validator returns 0 errors and emits the module-case warning | Mechanism pages should show the smallest useful case, not only categories. |
 | `zh-overlay` | Chinese Lite package | Validator exits with 0 errors under `--lite`; Chinese routes preserve English source identifiers | Chinese carries the mental model while source terms stay exact. |
 
 ## Notes

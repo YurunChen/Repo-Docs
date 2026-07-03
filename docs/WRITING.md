@@ -25,6 +25,7 @@ Use Socratic interrogation as an internal modeling tool, not as a visible writin
 | What concrete situation is the reader in? | The user action, command, request, artifact, failure, or data record that makes the page necessary. |
 | Why does this phase exist? | The pressure: ambiguity, validation, state handoff, trust boundary, expensive work, external failure, or another real force. |
 | What would break if the repo skipped this step? | The failure, wrong output, lost state, invalid contract, or misleading result that makes the mechanism matter. |
+| What concrete case would let the reader test the model? | The smallest real or clearly labeled input -> output, before -> after, allowed/denied, or normal/boundary example that makes the mechanism inspectable. |
 | What evidence would prove this explanation wrong? | Source, test, config, data, artifact, or command output that must be inspected before the prose claims certainty. |
 | Where do assumptions stop? | The boundary, caveat, fallback, unsupported path, or unknown that prevents overclaiming. |
 | What would a careful newcomer ask next? | The next page, source-evidence audit, glossary row, verify command, or explicit out-of-scope note. |
@@ -79,6 +80,8 @@ For walkthrough steps, do not start the first paragraph with a function, class, 
 
 For narrative pages, use paragraphs for reasoning. A good paragraph has one point, one reason, and a concrete hook into behavior or source. Use bullets and tables for comparison or lookup. Do not build the whole page out of bullets. Do not turn every walkthrough step into the same stack of `###` reader-state headings when prose and inline locator labels would keep continuity.
 
+Do not treat long prose as the default shape. Prose explains why; structure shows what. When the reader needs to compare, inspect fields, follow a sequence, reproduce a command, or see a concrete input become an output, use a table, bullet list, numbered list, timeline, fenced block, or small diagram. If a paragraph is carrying several comparisons or transitions, the paragraph is doing display work that Markdown structure should do.
+
 Use first-person only when the repo or project history actually supports it. Otherwise write from the project: "the runner does this because", "the current check catches", "this leaves". The style should feel human without inventing an authorial diary.
 
 Do not let source confidence labels become the prose rhythm. Default evidence status belongs at the **end** of narrative pages; [QUALITY_RULES.md](QUALITY_RULES.md) defines the label family. Use local labels only where confidence changes or where a statement would be surprising without explicit evidence.
@@ -92,7 +95,7 @@ Concrete engineering prose is the default. This is the expression strategy behin
 | "The architecture is extensible." | "A new checker only needs to implement the same input and result shape; the runner already loops over that list." |
 | "The project uses a checker." | "The generator writes the output. A separate checker opens it, runs the checks, and records the bugs it found." |
 
-Use this as a sincerity test: after a paragraph, ask what the reader can now see, run, inspect, or doubt more precisely. If the answer is "they know the project is important", rewrite it.
+Use this as a sincerity test: after a paragraph, ask what the reader can now see, run, inspect, or doubt more precisely. If the answer is "they know the project is important", rewrite it. For a mechanism page, also ask whether a reader can name one representative input, output, and boundary condition without opening the source; if not, add or tighten the case.
 
 Reading experience rules:
 

@@ -128,6 +128,21 @@ BOUNDARY_SIGNAL_PATTERN = re.compile(
     r"失败|错误|重试|回退|拒绝|无效|校验|验证|边界|限制|异常|权限|保护",
     re.IGNORECASE,
 )
+# Generic mechanism signals only. Keep this WARN-only and do not add
+# project names, method names, page names, or repo-specific domains here.
+MODULE_CASE_TRIGGER_PATTERN = re.compile(
+    r"\b(transform|transformation|contract|schema|payload|shape|input|output|state|"
+    r"transition|lifecycle|route|routing|retriev\w*|select\w*|rank\w*|persist\w*|"
+    r"decision|permission|boundary|allowed|denied)\b|"
+    r"转换|合同|契约|结构|形状|输入|输出|状态|变化|流转|生命周期|路由|检索|选择|排序|持久|决策|权限|边界|允许|拒绝",
+    re.IGNORECASE,
+)
+MODULE_CASE_SIGNAL_PATTERN = re.compile(
+    r"\b(case|example|for example|e\.g\.|before\s*->\s*after|input\s*->\s*output|"
+    r"allowed\s+vs\s+denied|normal|boundary|failure|timeline)\b|"
+    r"示例|例子|案例|输入/输出|前后|允许|拒绝|正常|边界|失败|时间线",
+    re.IGNORECASE,
+)
 EVIDENCE_MAP_NAMES = {"source-evidence.md"}
 EVIDENCE_TRAVERSAL_PATTERN = re.compile(
     r"\bPass\s*1\b[\s\S]*\bPass\s*2\b|第\s*1\s*(轮|遍)[\s\S]*第\s*2\s*(轮|遍)",
@@ -562,6 +577,14 @@ def check_explanation_structure(root: Path) -> list[Finding]:
                 Finding(
                     "WARN",
                     f"{relative} explains a code shape but has no minimal fenced example or command",
+                )
+            )
+
+        if MODULE_CASE_TRIGGER_PATTERN.search(text) and not MODULE_CASE_SIGNAL_PATTERN.search(text):
+            findings.append(
+                Finding(
+                    "WARN",
+                    f"{relative} explains a mechanism with inputs/outputs or boundaries but has no obvious representative case; add an input/output, before/after, normal/boundary, or allowed/denied example when evidence supports it",
                 )
             )
 

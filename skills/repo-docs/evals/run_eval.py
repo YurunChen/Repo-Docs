@@ -275,6 +275,11 @@ def assert_rule_text() -> None:
         expect(decision in root_rules, f"ROOT_AGENT_RULES.md missing sync decision {decision!r}")
 
     expect("Ordinary repo questions are not automatic doc edits" in sync, "SYNC_RULES.md must protect answer-only repo questions")
+    expect("Representative case before abstraction" in skill, "SKILL.md must include the representative case law")
+    expect("Shape follows reader need" in skill, "SKILL.md must include the display-shape law")
+    expect("Module case gate" in page_rules, "PAGE_RULES.md must define the module case gate")
+    expect("Display shape router" in page_rules, "PAGE_RULES.md must include the display shape router")
+    expect("Wall-of-text guard" in page_rules, "PAGE_RULES.md must include the wall-of-text guard")
     expect("adding a focused module, refining the owning module, or merging overlapping modules" in page_rules, "PAGE_RULES.md must route stable gaps to module add/refine/merge")
     expect("Do not create any other `references/` pages" in page_rules, "PAGE_RULES.md must forbid extra references pages")
     for term_type in (
@@ -322,6 +327,22 @@ def main() -> int:
         "--lite",
         expect_code=0,
         contains="opening has many code-shaped names",
+    )
+
+    missing_case = dict(STANDARD_FILES)
+    missing_case["modules/order-validation.md"] = """# Order Validation
+
+Order validation is the contract that decides whether a payload can change report state. The route depends on item count and the writer depends on the decision.
+
+Read [the run](../walkthroughs/one-real-run.md) or audit [source evidence](../references/source-evidence.md).
+
+Evidence status: Confirmed unless noted.
+"""
+    validate_fixture(
+        "module-missing-case",
+        missing_case,
+        expect_code=0,
+        contains="no obvious representative case",
     )
 
     assert_rule_text()

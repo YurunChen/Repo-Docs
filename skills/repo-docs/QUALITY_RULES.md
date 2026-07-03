@@ -38,7 +38,7 @@ The docs are good when a newcomer can answer these in about 15 minutes using the
 6. After reading a concept page, what command or test would confirm I understood the mechanism?
 7. For research repos: what is the research question, method, metric, data contract, and baseline/ablation story?
 8. What caveats matter for the topic I am reading right now?
-9. For any important rule, contract, transformation, or lifecycle step, what is one concrete example that works and one edge case that fails?
+9. For any important rule, contract, transformation, or lifecycle step, what is one concrete input/output, before/after, allowed/denied, or normal/boundary case that works, and what edge case fails or stays out of scope?
 10. Can a newcomer trace one real workflow from observable entry to output/artifact without opening source code first?
 11. For case studies, generated examples, source-heavy docs, or handoff-sensitive work, does `references/quality-review.md` record reader-simulation answers, the understandability review, and residual risk?
 12. Does `references/source-evidence.md` record at least two traversal passes and make adjacent out-of-scope paths visible?

@@ -67,6 +67,20 @@ Markdown is the reading interface. Use it to control rhythm and reduce cognitive
 
 When a page feels dense, first ask whether the reader needs a better heading, one small table, or a source detail folded into `<details>`. Do not add visual structure for decoration.
 
+Display shape router:
+
+| Reader need | Use |
+| --- | --- |
+| Understand cause, reason, pressure, or caveat | Short prose paragraphs |
+| Compare concepts, states, choices, or before/after behavior | Table |
+| Inspect fields, config keys, schemas, options, or parameters | Table or fenced block |
+| Follow a sequence or lifecycle | Numbered list or short timeline |
+| See a mechanism concretely | Representative case table or compact snippet |
+| Reproduce behavior | Command block plus expected output or check |
+| Hold several branches or state handoffs | Small Mermaid, flowchart, or ASCII diagram paired with prose |
+
+Wall-of-text guard: prose explains why; structure shows what. If a paragraph carries more than one reason, one state transition, or one comparison, split it or convert the comparison, case, sequence, command, or lookup into a table, list, timeline, or fenced block. Long continuous prose is not a quality signal.
+
 ## Canonical Output Rule
 
 Do not frame output as a file-count exercise. Use this rule:
@@ -119,7 +133,7 @@ Build starts from evidence and ends with a guide a future reader can use without
    Add more passes only when the model still has unexplained gaps.
 5. Draft the understanding brief from `references/source-evidence.md` before writing pages. The brief must name a real scenario, input, output, hard part, boundary or failure, falsifying check, likely reader follow-up, and the evidence for each claim.
 6. Write `README.md` and `walkthroughs/one-real-run.md` from the understanding brief and evidence base. If the brief cannot name those fields, re-inspect source before writing the walkthrough.
-7. Add modules for concepts, mechanisms, contracts, commands, data shapes, or caveats the walkthrough cannot explain cleanly inline. When a stable knowledge gap or understanding gap appears, resolve it by adding a focused module, refining the owning module, or merging overlapping modules so the reader still has one durable home for that concept.
+7. Add modules for concepts, mechanisms, contracts, commands, data shapes, or caveats the walkthrough cannot explain cleanly inline. When a stable knowledge gap or understanding gap appears, resolve it by adding a focused module, refining the owning module, or merging overlapping modules so the reader still has one durable home for that concept. For mechanism-heavy modules, draft one representative case before polishing the prose: what goes in, what changes or gets decided, what comes out, and what boundary or failure variant matters.
 8. Do not create extra `references/` pages. Schemas, metrics, tool parameters, task catalogs, scripts, artifacts, baseline methods, command lists, and exact-name lookup belong in the owning module when they matter to understanding.
 9. Run an understandability review before delivery. For case studies, generated examples, source-heavy docs, or handoff-sensitive work, write it as `references/quality-review.md`, the second fixed generated artifact.
 10. Add `glossary.md` and `change-log.md`.
@@ -407,8 +421,10 @@ Create or patch a module when a reader needs to understand a durable idea more d
 First-principles module test:
 
 ```text
-reader confusion -> core model -> mechanism -> concrete details -> boundary -> verification
+reader confusion -> core model -> representative case -> mechanism -> concrete details -> boundary -> verification
 ```
+
+Module case gate: if the module explains a mechanism whose reader model depends on an input, state change, output, decision, selection, persistence, or boundary, include a compact case near the first mechanism explanation. The case should show the smallest truthful input, the action or transition, the resulting output/state/artifact, and one boundary or failure variant when source evidence exists. If a case would be misleading, unavailable, or unsafe to show, say that explicitly and point to the verification hook instead.
 
 Before writing a module, identify the reader's actual gap. Common gaps are:
 
@@ -426,7 +442,7 @@ Shape the module around the reader's question, not around source-tree order. A s
 3. The pressure it handles: ambiguity, trust boundary, state handoff, invalid input, retrieval/ranking, evaluation, persistence, external dependency, or another real force.
 4. The mechanism: what enters, what changes, what is stored or returned, and what downstream code relies on.
 5. The important details: fields, commands, config keys, tool arguments, schemas, metrics, artifacts, call shapes, data shapes, or lifecycle steps that are necessary for understanding.
-6. One representative example, preferably with normal and boundary/failure variants when evidence exists.
+6. One representative case, preferably input -> output, before -> after, allowed vs denied, or normal plus boundary/failure variants when evidence exists.
 7. The caveat: what is inferred, unsupported, intentionally out of scope, or easy to misread.
 8. A verification hook: a test, command, artifact, source locator, or check that confirms the reader understood the mechanism.
 
@@ -444,7 +460,7 @@ Before writing a module doc, hold this brief in mind:
 | Key insight | What should the reader understand after one minute? |
 | Where this appears in a walkthrough | Which real command/request/task/failure makes this concept visible? |
 | Important details | Which fields, commands, shapes, config, metrics, or artifacts are necessary to understand the concept? |
-| Concrete example | What one example, plus one boundary case when useful, makes the concept easy to remember? |
+| Concrete example | What one input/output, before/after, allowed/denied, or normal/boundary case makes the concept easy to remember? |
 | Source locator | Which source path proves the behavior? |
 | Verification hook | What command, test, or observation confirms the reader understood the mechanism? |
 
@@ -459,7 +475,7 @@ Module docs should include examples when a concept would otherwise stay abstract
 - retrieval, ranking, routing, or selection: query/context -> chosen result and non-result
 - failure modes: what fails, how it is surfaced, and what remains unchanged
 
-Prefer one compact table or snippet over long prose. Examples must come from inspected project evidence. Use real project evidence when safe. If privacy, benchmark integrity, or access limits prevent showing actual values, use neutral placeholders and label them as placeholders; do not present them as real observations.
+Prefer one compact table or snippet over long prose. Examples must come from inspected project evidence. Use real project evidence when safe. If privacy, benchmark integrity, or access limits prevent showing actual values, use neutral placeholders and label them as placeholders; do not present them as real observations. Do not let a module pass with only categories, stages, or source names when the reader still needs to see a concrete input become an output.
 
 ### Cleanup / removal mode
 

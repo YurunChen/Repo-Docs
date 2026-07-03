@@ -75,6 +75,8 @@ Bad:
 - 成稿前做一次去 AI 表达：删掉“此外”“值得注意”“至关重要”“关键作用”“彰显”等空转词，少用破折号和粗体小标题。
 - 避免让“不仅……而且……”或“不是……而是……”承担主解释；改成正面机制句。
 - Put fields, command shapes, schemas, artifacts, and metrics in the owning module when they are needed to explain the concept.
+- 讲一个机制时，如果读者理解它需要知道输入、状态变化、输出、决策或边界，就先问读者需要看到哪一个最小 case：输入是什么、动作或状态变化是什么、输出/产物是什么、边界或失败分支是什么。缺 case 时不要只补抽象解释；要补可读的代表性输入/输出形状，或明确说明为什么 case 会误导、缺证据或不宜展示。
+- prose 负责解释为什么，结构负责展示是什么。读者需要比较、查字段、看顺序、复现命令或看到输入如何变输出时，优先用 table、列表、时间线、fenced block 或小图；不要把大段连续文字当成质量信号。
 - 按读者问题选择展示策略，而不是按模板固定写法：因果解释用 prose；对比、before/after、字段查找用 table；命令、数据形状、调用形状用 fenced block；生命周期或顺序关系用短时间线 / 有序列表；分支、阶段、状态交接、多路径关系难以用 prose 承载时再用 Mermaid / flowchart。
 - Flowcharts support prose; they do not replace it.
 - A walkthrough step links to the module where a durable concept first matters.
@@ -83,7 +85,7 @@ Bad:
 
 - README: Chinese opening prose followed by a stable `## 阅读路径` reader-goal table. Use columns `读者目标 | 从这里开始 | 读完后获得什么`, including one row that routes evidence audit to `references/source-evidence.md`.
 - Walkthrough: numbered `## Step N: 行为名` headings; prose explains mechanism; verification appears once near the end.
-- Module: use Chinese concept headings shaped by the reader problem. Preserve the module job: concept first, representative source locator later, onward route, and the evidence note. If the reader's easiest path is a question sequence, lifecycle, comparison, timeline, or concept-first flow, use that structure.
+- Module: use Chinese concept headings shaped by the reader problem. Preserve the module job: concept first, representative case for mechanism-heavy pages, representative source locator later, onward route, and the evidence note. If the reader's easiest path is a question sequence, lifecycle, comparison, timeline, input/output case, or concept-first flow, use that structure.
 - References: fixed generated artifacts only: `source-evidence.md` and, when needed, `quality-review.md`. Understanding and details belong in walkthroughs or modules.
 
 ## Agent Instruction Block
