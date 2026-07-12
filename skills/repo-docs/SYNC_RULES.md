@@ -31,7 +31,7 @@ Canonical pipeline: [Sync gate](SKILL.md#sync-gate) — **interaction-driven**, 
 
 During the user ↔ coding agent conversation, when a repo question appears and `repo-docs/` is relevant:
 
-1. Read `repo-docs/README.md`, the main walkthrough, and any relevant module, source-evidence, quality-review, or glossary pages.
+1. Read `repo-docs/README.md`, the main walkthrough, `code-map.md` when source ownership or change location matters, and any relevant module, source-evidence, quality-review, or glossary pages.
 2. Inspect the source-of-truth code, data, config, tests, or artifacts behind the answer.
 3. Decide one outcome:
    - `none`: the question is unrelated to guide-covered knowledge.
@@ -73,7 +73,7 @@ Background handoff contract:
 Task: repo-docs background sync
 Trigger: <repo question | behavior change | user uncertainty | memory promotion | widened sync>
 Durable facts or changed source areas: <specific facts/files/commands/tests>
-Current guide pages to inspect first: <README, walkthrough, module, source-evidence, quality-review, glossary, change-log>
+Current guide pages to inspect first: <README, walkthrough, code-map, module, source-evidence, quality-review, glossary, change-log>
 Likely owning pages: <smallest pages to patch>
 Must preserve: <answer-critical facts already given to user, user constraints, language>
 Verification: <validator/link check/test/source inspection>
@@ -149,10 +149,10 @@ Think from the changed behavior outward:
 
 | Change | Docs to align |
 | --- | --- |
-| New API, route, tool, or external surface | README route map, relevant walkthrough, owning module, runbook/root command table when applicable. |
+| New API, route, tool, or external surface | README route map, relevant walkthrough, `code-map.md`, owning module, runbook/root command table when applicable. |
 | New or renamed environment variable | Runbook, root instructions, setup docs, integration guide when downstream users see it. |
 | New data store, table, schema, task format, or artifact | Owning module, relevant walkthrough, reproduction path, source evidence. |
-| New feature crossing several concepts | README, walkthrough, affected modules, runbook, change log, handoff notes. |
+| New feature crossing several concepts | README, walkthrough, `code-map.md`, affected modules, runbook, change log, handoff notes. |
 | Cross-project contract change | Upstream and downstream modules/docs, SDK/API usage modules, integration examples. |
 | Completed plan or replaced decision | Current docs updated in place; durable history recorded in `change-log.md` or archive. |
 | Terminology or rule change | Glossary, affected module docs, root rules when it changes agent behavior. |
@@ -179,6 +179,7 @@ For a new capability, cover four reader questions: how to use it, how it works, 
 - [ ] Root agent instructions contain operational rules and guide policy.
 - [ ] README and docs explain how to understand, run, integrate, and operate the project.
 - [ ] Changed APIs/routes appear in the owning module or walkthrough.
+- [ ] Added, removed, renamed, or responsibility-changing first-party source directories, entrypoints, and important files appear in `code-map.md` with the nearest useful verification point.
 - [ ] Changed environment variables appear in setup/runbook docs and root instructions.
 - [ ] Changed data models or schemas appear in the owning module and source evidence.
 - [ ] Cross-project effects are reflected in every affected project.
@@ -211,8 +212,8 @@ For **widened-scope sync**, handoff, and milestone closeouts—not first-time **
 
 | Change type | Docs to check |
 | --- | --- |
-| New or renamed entrypoint/script | `README.md`, relevant walkthrough, `flows.md` for multi-phase changes, relevant concept page |
-| Runtime/session/control-flow change | relevant walkthrough, `flows.md` or `flows/<topic>.md`, runtime concept page when needed, README route map |
+| New or renamed entrypoint/script | `README.md`, relevant walkthrough, `code-map.md`, `flows.md` for multi-phase changes, relevant concept page |
+| Runtime/session/control-flow change | relevant walkthrough, `code-map.md`, `flows.md` or `flows/<topic>.md`, runtime concept page when needed, README route map |
 | New tool or changed tool args | tool module when needed, walkthrough if behavior changes, glossary if term changed |
 | Data/schema/task/config change | data/task/config module when needed, local caveat if uncertainty remains, `change-log.md` when user-facing |
 | Rule or metric change | rule/evaluation module when needed, main guide confidence/summary |
@@ -230,6 +231,7 @@ For **widened-scope sync**, handoff, and milestone closeouts—not first-time **
 - [ ] Module docs explain current concepts that readers actually need.
 - [ ] Main guide includes quick understanding, reproduce/run, and verify paths.
 - [ ] Non-Seed repos include `walkthroughs/one-real-run.md`, linked from README.
+- [ ] Standard packages include `code-map.md`, linked from README; every in-scope first-party source directory is mapped or explicitly excluded/deferred with a reason.
 - [ ] Walkthroughs use numbered `## Step N: [behavior]` sections and connected prose; no template `###` stack under every step; no duplicate closing sections that repeat the steps.
 - [ ] README orients the reader without repeating the walkthrough's full explanation.
 - [ ] Module docs deepen concepts without copying walkthrough paragraphs; link back instead.

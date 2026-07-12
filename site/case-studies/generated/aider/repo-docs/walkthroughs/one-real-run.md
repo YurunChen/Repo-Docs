@@ -72,6 +72,8 @@ The source anchors are [`EditBlockCoder.apply_edits()` constructing the no-match
 
 The local mechanics are verified by the focused tests named in [the source evidence ledger](../references/source-evidence.md#verification-commands). In the current environment, those tests require project dependencies such as `oslex`; if dependency installation has not been run, collection fails before the tests execute.
 
+Use [the CLI edit code map](../code-map.md) to locate the source areas and focused tests behind these steps.
+
 For the next concept-level explanation, read [why the edit lifecycle treats model output as a proposal](../modules/edit-lifecycle.md).
 
 Evidence status: Confirmed unless noted.

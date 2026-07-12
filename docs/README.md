@@ -110,6 +110,7 @@ would otherwise mislead the next reader, not every page that could be polished.
 | --- | --- |
 | `repo-docs/README.md` | Orient the reader and point to the first useful path. |
 | `walkthroughs/one-real-run.md` | Follow one real behavior from observable entry to output. |
+| `code-map.md` | Map in-scope source directories to responsibilities, important code, tests, and likely change points. |
 | `modules/` | Explain durable concepts the walkthrough names. |
 | `references/` | Hold source evidence and optional quality review. |
 | `glossary.md` | Translate repeated project terms into plain meaning. |

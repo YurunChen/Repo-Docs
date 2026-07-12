@@ -9,6 +9,7 @@ This guide is scoped to the CLI edit workflow in the current source tree. It doe
 | Reader goal | Start here | What this page gives you |
 | --- | --- |
 | Build a mental model quickly | [How one terminal request becomes an edit](walkthroughs/one-real-run.md) | The main behavior trace from startup through model reply, file write, reflection, and commit hooks. |
+| Locate the implementation | [Use the CLI edit code map](code-map.md) | Directory responsibilities, important files and symbols, related tests, and scoped exclusions. |
 | Understand why startup passes so many objects into the edit loop | [How a session is assembled before the first model call](modules/session-assembly.md) | The CLI boundary where config, git, files, commands, and model settings become session policy. |
 | Understand why Aider does not blindly write model output | [How edits are parsed, checked, written, and reflected](modules/edit-lifecycle.md) | The gates that stand between a model reply and disk writes. |
 | Audit claims and caveats | [The source evidence ledger](references/source-evidence.md) | Source, tests, confidence, caveats, coverage notes, and verification commands. |

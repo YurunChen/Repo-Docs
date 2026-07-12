@@ -18,6 +18,7 @@ from urllib.parse import unquote
 REQUIRED_NON_SEED_FILES = [
     "README.md",
     "walkthroughs/one-real-run.md",
+    "code-map.md",
     "references/source-evidence.md",
     "glossary.md",
     "change-log.md",
@@ -48,6 +49,20 @@ READER_ROUTES_TABLE_HEADER_PATTERN = re.compile(
     r"\|\s*(Reader goal|读者目标)\s*\|\s*(Start here|从这里开始)\s*\|\s*(What this page gives you|读完后获得什么)\s*\|",
     re.IGNORECASE,
 )
+CODE_MAP_TABLE_HEADER_PATTERN = re.compile(
+    r"\|\s*(Path|路径)\s*\|\s*(Responsibility|职责)\s*\|\s*(Key code|关键代码)\s*\|\s*"
+    r"(Connection to the main path|与主流程的关系)\s*\|",
+    re.IGNORECASE,
+)
+CODE_MAP_PATH_ROW_PATTERN = re.compile(r"^\|\s*`([^`]+/)`\s*\|([^\n]+)$", re.MULTILINE)
+CODE_MAP_DIRECTORY_HEADING_PATTERN = re.compile(r"^##\s+`([^`]+/)`\s*$", re.MULTILINE)
+CODE_MAP_IMPORTANT_CODE_TABLE_PATTERN = re.compile(
+    r"\|\s*(Important code|重要代码)\s*\|\s*(Function|功能)\s*\|\s*(Key symbols|关键符号)\s*\|\s*"
+    r"(Called by / used by|调用方\s*/\s*使用方)\s*\|",
+    re.IGNORECASE,
+)
+CODE_MAP_COVERAGE_HEADING_PATTERN = re.compile(r"^##\s+(Coverage|覆盖范围|覆盖)\s*$", re.MULTILINE | re.IGNORECASE)
+CODE_MAP_SPLIT_LINK_PATTERN = re.compile(r"\]\((?:\./)?code-map/[^)]+\.md(?:#[^)]+)?\)", re.IGNORECASE)
 GENERATED_PAGES_PATTERN = re.compile(r"^Generated pages:\s*$|^生成页面：\s*$", re.MULTILINE | re.IGNORECASE)
 CONFIDENCE_LABEL_PATTERN = re.compile(r"\b(Confirmed|Inferred|Planned|Unknown)\b|已确认|推断|计划中|未确认")
 SOURCEY_OPENING_TOKEN_PATTERN = re.compile(
@@ -318,9 +333,13 @@ def check_non_seed_routing(root: Path, lite: bool = False) -> list[Finding]:
             )
         if "references/source-evidence.md" not in text and "source-evidence.md" not in text:
             findings.append(Finding("ERROR", "README.md should route evidence audit to references/source-evidence.md"))
+        if (not lite or (root / "code-map.md").is_file()) and "code-map.md" not in text:
+            findings.append(Finding("ERROR", "README.md should route code location to code-map.md"))
 
     if walkthrough.is_file():
         text = read_text(walkthrough)
+        if (root / "code-map.md").is_file() and "code-map.md" not in text:
+            findings.append(Finding("ERROR", "Main walkthrough should route onward to code-map.md"))
         has_step = bool(STEP_PATTERN.search(text))
         has_locator = contains_any(
             text,
@@ -423,6 +442,76 @@ def check_non_seed_routing(root: Path, lite: bool = False) -> list[Finding]:
     return findings
 
 
+def check_code_map(root: Path) -> list[Finding]:
+    path = root / "code-map.md"
+    if not path.is_file():
+        return []
+
+    findings: list[Finding] = []
+    text = read_text(path)
+    if not CODE_MAP_TABLE_HEADER_PATTERN.search(text):
+        findings.append(
+            Finding(
+                "ERROR",
+                "code-map.md should use Path | Responsibility | Key code | Connection to the main path columns",
+            )
+        )
+    directory_rows = {path_value: row_tail for path_value, row_tail in CODE_MAP_PATH_ROW_PATTERN.findall(text)}
+    directory_headings = list(CODE_MAP_DIRECTORY_HEADING_PATTERN.finditer(text))
+    heading_paths = {match.group(1) for match in directory_headings}
+    split_paths = {
+        path_value
+        for path_value, row_tail in directory_rows.items()
+        if CODE_MAP_SPLIT_LINK_PATTERN.search(row_tail)
+    }
+    missing_sections = sorted(set(directory_rows) - heading_paths - split_paths)
+    if not directory_rows:
+        findings.append(
+            Finding(
+                "WARN",
+                "code-map.md has no directory rows beneath its summary table",
+            )
+        )
+    elif missing_sections:
+        findings.append(
+            Finding(
+                "WARN",
+                f"code-map.md is missing per-directory sections for: {', '.join(missing_sections)}",
+            )
+        )
+
+    missing_code_tables: list[str] = []
+    for index, heading in enumerate(directory_headings):
+        section_end = directory_headings[index + 1].start() if index + 1 < len(directory_headings) else len(text)
+        coverage = CODE_MAP_COVERAGE_HEADING_PATTERN.search(text, heading.end())
+        if coverage is not None and coverage.start() < section_end:
+            section_end = coverage.start()
+        section = text[heading.end() : section_end]
+        if not CODE_MAP_IMPORTANT_CODE_TABLE_PATTERN.search(section):
+            missing_code_tables.append(heading.group(1))
+    if missing_code_tables:
+        findings.append(
+            Finding(
+                "WARN",
+                f"code-map.md has directory sections without an important-code table: {', '.join(missing_code_tables)}",
+            )
+        )
+
+    coverage_heading = CODE_MAP_COVERAGE_HEADING_PATTERN.search(text)
+    if coverage_heading is None:
+        findings.append(
+            Finding(
+                "WARN",
+                "code-map.md has no explicit `## Coverage` section; distinguish covered source from generated, vendored, unrelated, excluded, or deferred areas",
+            )
+        )
+    elif directory_headings and coverage_heading.start() < directory_headings[-1].start():
+        findings.append(Finding("WARN", "code-map.md should place its Coverage section after all directory sections"))
+    if "walkthroughs/one-real-run.md" not in text and "one-real-run.md" not in text:
+        findings.append(Finding("ERROR", "code-map.md should route back to the main walkthrough"))
+    return findings
+
+
 def last_sync_sha(change_log_text: str) -> str | None:
     matches = list(SYNC_ANCHOR_PATTERN.finditer(change_log_text))
     if not matches:
@@ -433,7 +522,7 @@ def last_sync_sha(change_log_text: str) -> str | None:
 
 def narrative_markdown_paths(root: Path) -> list[Path]:
     paths: list[Path] = []
-    for relative in ("README.md", "walkthroughs/one-real-run.md"):
+    for relative in ("README.md", "walkthroughs/one-real-run.md", "code-map.md"):
         path = root / relative
         if path.is_file():
             paths.append(path)
@@ -527,7 +616,7 @@ def check_glossary_coverage(root: Path) -> list[Finding]:
     glossary_text = read_text(glossary).lower()
     counts: dict[str, int] = {}
     for path in narrative_markdown_paths(root):
-        if path.name == "README.md":
+        if path.name in {"README.md", "code-map.md"}:
             continue
         text = FENCE_PATTERN.sub("", read_text(path))
         for match in INLINE_CODE_PATTERN.finditer(text):
@@ -790,7 +879,7 @@ def check_reading_experience(root: Path) -> list[Finding]:
     """Warn when page structure gets in the way of explanation."""
     findings: list[Finding] = []
     narrative_paths: list[Path] = []
-    for relative in ("README.md", "walkthroughs/one-real-run.md"):
+    for relative in ("README.md", "walkthroughs/one-real-run.md", "code-map.md"):
         path = root / relative
         if path.is_file():
             narrative_paths.append(path)
@@ -918,7 +1007,10 @@ def check_scent(root: Path) -> list[Finding]:
     readme = root / "README.md"
     if readme.is_file():
         content_paths.append(readme)
-    for sub in ("walkthroughs", "modules"):
+    code_map = root / "code-map.md"
+    if code_map.is_file():
+        content_paths.append(code_map)
+    for sub in ("walkthroughs", "code-map", "modules"):
         directory = root / sub
         if directory.is_dir():
             content_paths.extend(sorted(directory.glob("*.md")))
@@ -1016,6 +1108,7 @@ def main() -> int:
     findings.extend(check_links(root, args.repo_root if args.repo_root is not None and args.repo_root.is_dir() else None))
     if not args.seed:
         findings.extend(check_non_seed_routing(root, lite=args.lite))
+        findings.extend(check_code_map(root))
         findings.extend(check_explanation_structure(root))
         findings.extend(check_evidence_maps(root))
         findings.extend(check_quality_review(root))

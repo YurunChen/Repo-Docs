@@ -24,6 +24,8 @@ Chinese carries understanding: what this thing is, why it exists, what happens, 
 
 `references/source-evidence.md` is still the fixed Build evidence base in Chinese packages. Write claims, caveats, and reader-facing notes in Chinese; keep paths, commands, fields, source identifiers, and exact evidence locators in their source form.
 
+标准包中的 `code-map.md` 写成“代码地图”。它在主 walkthrough 之后回答：范围内每个源码目录负责什么，里面哪些文件或符号最重要，某类修改应该从哪里开始，相关验证在哪里。中文负责说清职责和改动入口，英文路径与符号负责精确定位。
+
 If writing exposes a weak claim or insufficient evidence, pause drafting and return to the project evidence. Re-inspect the relevant source path, tests, config, schema, data, command output, or artifact; if the evidence is still missing, label the claim as `推断` / `未确认`, defer it explicitly, or leave it out.
 
 ## Language Rules
@@ -51,7 +53,7 @@ Default locator rule:
 
 - Prefer a Chinese visible label that links to the source file over showing the raw path as visible text.
 - Use inline code only for short identifiers that matter to the mechanism.
-- Use `references/source-evidence.md` for grouped source evidence instead of creating separate source-map pages.
+- Use `references/source-evidence.md` for grouped claim evidence instead of creating extra evidence/source-map pages. `code-map.md` is the reader-facing code navigation page, not an evidence ledger.
 - Never make a long path the visible link text in narrative prose.
 
 Good:
@@ -80,13 +82,15 @@ Bad:
 - 按读者问题选择展示策略，而不是按模板固定写法：因果解释用 prose；对比、before/after、字段查找用 table；命令、数据形状、调用形状用 fenced block；生命周期或顺序关系用短时间线 / 有序列表；分支、阶段、状态交接、多路径关系难以用 prose 承载时再用 Mermaid / flowchart。
 - Flowcharts support prose; they do not replace it.
 - A walkthrough step links to the module where a durable concept first matters.
+- 先让 walkthrough 建立行为模型，再让代码地图定位职责。不要用目录树替代主流程解释。
 
 ## Page Shape Notes
 
 - README: Chinese opening prose followed by a stable `## 阅读路径` reader-goal table. Use columns `读者目标 | 从这里开始 | 读完后获得什么`, including one row that routes evidence audit to `references/source-evidence.md`.
 - Walkthrough: numbered `## Step N: 行为名` headings; prose explains mechanism; verification appears once near the end.
+- Code map: title 使用“代码地图”。先说明覆盖范围，再用 `路径 | 职责 | 关键代码 | 与主流程的关系` 汇总；随后按范围内源码目录说明重要文件、功能、关键符号、调用方/使用方和相关验证。目录名本身不能代替中文职责说明，结尾明确列出排除或暂缓区域。
 - Module: use Chinese concept headings shaped by the reader problem. Preserve the module job: concept first, representative case for mechanism-heavy pages, representative source locator later, onward route, and the evidence note. If the reader's easiest path is a question sequence, lifecycle, comparison, timeline, input/output case, or concept-first flow, use that structure.
-- References: fixed generated artifacts only: `source-evidence.md` and, when needed, `quality-review.md`. Understanding and details belong in walkthroughs or modules.
+- References: fixed generated artifacts only: `source-evidence.md` and, when needed, `quality-review.md`. 行为解释放 walkthrough，源码导航放代码地图，机制细节放 modules。
 
 ## Agent Instruction Block
 
@@ -105,7 +109,7 @@ Do not translate the whole agent instruction block into Chinese. The extra sente
 After first build, reply in Chinese with:
 
 1. what readers can now understand or follow;
-2. where to start: `repo-docs/README.md` -> main walkthrough;
+2. where to start: `repo-docs/README.md` -> main walkthrough -> `repo-docs/code-map.md` when locating code;
 3. key pages and their jobs;
 4. scope, uncovered areas, validator result, and root agent-file status.
 

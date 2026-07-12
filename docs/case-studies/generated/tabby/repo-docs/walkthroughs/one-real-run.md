@@ -67,4 +67,6 @@ cargo test -p tabby services::completion::completion_prompt::tests::test_prompt_
 
 The heavier end-to-end check is `cargo test -p tabby run_golden_tests_cpu`. It starts a local model server and may download or load a model, so it is slower than the unit checks.
 
+Use [the completion code map](../code-map.md) to locate startup, routing, service, prompt, shared-config, and golden-test source areas behind these steps.
+
 Evidence status: Confirmed unless noted.

@@ -8,6 +8,7 @@ Generated files:
 
 - [README.md](generated/bolt-diy/repo-docs/README.md)
 - [walkthroughs/one-real-run.md](generated/bolt-diy/repo-docs/walkthroughs/one-real-run.md)
+- [code-map.md](generated/bolt-diy/repo-docs/code-map.md)
 - [modules/chat-stream.md](generated/bolt-diy/repo-docs/modules/chat-stream.md)
 - [modules/provider-model-selection.md](generated/bolt-diy/repo-docs/modules/provider-model-selection.md)
 - [modules/chat-api-contract.md](generated/bolt-diy/repo-docs/modules/chat-api-contract.md)

@@ -8,6 +8,7 @@ Generated files:
 
 - [README.md](generated/tabby/repo-docs/README.md)
 - [walkthroughs/one-real-run.md](generated/tabby/repo-docs/walkthroughs/one-real-run.md)
+- [code-map.md](generated/tabby/repo-docs/code-map.md)
 - [modules/completion-pipeline.md](generated/tabby/repo-docs/modules/completion-pipeline.md)
 - [modules/retrieval-context.md](generated/tabby/repo-docs/modules/retrieval-context.md)
 - [modules/completion-contract.md](generated/tabby/repo-docs/modules/completion-contract.md)

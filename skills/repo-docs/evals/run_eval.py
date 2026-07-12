@@ -23,8 +23,41 @@ Widget Runner turns one request into a saved report. The first path follows a us
 | Reader goal | Start here | What this page gives you |
 | --- | --- | --- |
 | Understand the main run | [Follow the order check](walkthroughs/one-real-run.md) | How the request becomes a report. |
+| Locate the implementation | [Use the code map](code-map.md) | Directory responsibilities, key files, and the main change points. |
 | Understand validation | [Read the validation module](modules/order-validation.md) | Why invalid orders stop before report writing. |
 | Audit evidence | [Check source evidence](references/source-evidence.md) | Source, tests, commands, artifacts, caveats, and page consumers. |
+
+Evidence status: Confirmed unless noted.
+""",
+    "code-map.md": """# Code Map
+
+Use this page after the walkthrough when you know the order-check behavior and need to locate its implementation. It maps the documented source scope, not every generated or unrelated file in the repository.
+
+| Path | Responsibility | Key code | Connection to the main path |
+| --- | --- | --- | --- |
+| `src/` | Implements order validation and report writing. | `orders.py`, `reports.py` | Receives the CLI payload and produces the report. |
+| `tests/` | Proves accepted and rejected order behavior. | `test_orders.py` | Verifies the guard and output artifact. |
+
+## `src/`
+
+| Important code | Function | Key symbols | Called by / used by |
+| --- | --- | --- | --- |
+| `src/orders.py` | Rejects empty orders before state changes. | `OrderValidator` | The CLI order-check path. |
+| `src/reports.py` | Writes accepted orders to the report artifact. | `write_report()` | The checked-order result. |
+
+`OrderValidator` is a source locator for this map, not a project concept for the glossary.
+
+## `tests/`
+
+| Important code | Function | Key symbols | Called by / used by |
+| --- | --- | --- | --- |
+| `tests/test_orders.py` | Verifies accepted and rejected orders. | `test_empty_order` | The order-check behavior and report boundary. |
+
+## Coverage
+
+Covered: the first-party `src/` implementation and `tests/` verification areas for the order-check path. Generated reports and the unrelated export mode are excluded.
+
+Read [why empty orders stop before report writing](modules/order-validation.md), or return to [how one order becomes a report](walkthroughs/one-real-run.md).
 
 Evidence status: Confirmed unless noted.
 """,
@@ -44,7 +77,7 @@ After validation, the writer stores the report path for downstream checks. The i
 
 Run `python -m pytest tests/test_orders.py` and inspect `reports/order.txt`.
 
-Read [the validation concept](../modules/order-validation.md) or audit [source evidence](../references/source-evidence.md).
+Use [the code map to locate the implementation](../code-map.md), read [the validation concept](../modules/order-validation.md), or audit [source evidence](../references/source-evidence.md).
 
 Evidence status: Confirmed unless noted.
 """,
@@ -84,7 +117,7 @@ Next reader question: how report formatting works. That is deferred until format
 
 | Claim | Evidence | Confidence | Caveat | Used by |
 | --- | --- | --- | --- | --- |
-| Empty orders stop before report writing. | `tests/test_orders.py` | Confirmed | Formatting is out of scope. | walkthrough, module |
+| Empty orders stop before report writing. | `tests/test_orders.py` | Confirmed | Formatting is out of scope. | walkthrough, code map, module |
 """,
     "glossary.md": """# Glossary
 
@@ -250,7 +283,14 @@ def expect(condition: bool, message: str) -> None:
         raise AssertionError(message)
 
 
-def validate_fixture(name: str, files: dict[str, str], *args: str, expect_code: int = 0, contains: str | None = None) -> None:
+def validate_fixture(
+    name: str,
+    files: dict[str, str],
+    *args: str,
+    expect_code: int = 0,
+    contains: str | None = None,
+    not_contains: str | None = None,
+) -> None:
     with tempfile.TemporaryDirectory(prefix=f"repo-docs-eval-{name}-") as tmp:
         root = Path(tmp) / "repo-docs"
         write_files(root, files)
@@ -259,6 +299,8 @@ def validate_fixture(name: str, files: dict[str, str], *args: str, expect_code: 
         expect(result.returncode == expect_code, f"{name}: expected exit {expect_code}, got {result.returncode}\n{output}")
         if contains:
             expect(contains in output, f"{name}: expected output to contain {contains!r}\n{output}")
+        if not_contains:
+            expect(not_contains not in output, f"{name}: expected output not to contain {not_contains!r}\n{output}")
 
 
 def assert_rule_text() -> None:
@@ -275,9 +317,14 @@ def assert_rule_text() -> None:
         expect(decision in root_rules, f"ROOT_AGENT_RULES.md missing sync decision {decision!r}")
 
     expect("Ordinary repo questions are not automatic doc edits" in sync, "SYNC_RULES.md must protect answer-only repo questions")
+    expect("`code-map.md`" in sync, "SYNC_RULES.md must keep source-location navigation current")
     expect("Representative case before abstraction" in skill, "SKILL.md must include the representative case law")
     expect("Shape follows reader need" in skill, "SKILL.md must include the display-shape law")
+    expect("`code-map.md`" in skill, "SKILL.md must define the standard code-map page")
+    expect("code location lives in `code-map.md`" in skill, "SKILL.md must give code location one durable home")
     expect("Module case gate" in page_rules, "PAGE_RULES.md must define the module case gate")
+    expect("Code Map Gate" in page_rules, "PAGE_RULES.md must define when and how to build the code map")
+    expect("Behavior first, code map second" in page_rules, "PAGE_RULES.md must keep code navigation after the behavior model")
     expect("Display shape router" in page_rules, "PAGE_RULES.md must include the display shape router")
     expect("Wall-of-text guard" in page_rules, "PAGE_RULES.md must include the wall-of-text guard")
     expect("adding a focused module, refining the owning module, or merging overlapping modules" in page_rules, "PAGE_RULES.md must route stable gaps to module add/refine/merge")
@@ -292,13 +339,88 @@ def assert_rule_text() -> None:
     expect("ROOT_AGENT_RULES.md" in reference, "REFERENCE.md must route root agent rules")
     expect("fixed generated artifacts" in zh, "repo-docs-zh overlay must use fixed references wording")
     expect("project-special common words" in zh, "repo-docs-zh overlay must describe glossary term categories")
+    expect("代码地图" in zh, "repo-docs-zh overlay must define the Chinese code-map experience")
 
 
 def main() -> int:
-    validate_fixture("standard-build", STANDARD_FILES)
+    validate_fixture(
+        "standard-build",
+        STANDARD_FILES,
+        not_contains="glossary.md has no entry for `OrderValidator`",
+    )
     validate_fixture("lite-build", LITE_FILES, "--lite")
     validate_fixture("seed-build", SEED_FILES, "--seed")
     validate_fixture("zh-overlay", ZH_LITE_FILES, "--lite")
+
+    missing_code_map = dict(STANDARD_FILES)
+    missing_code_map.pop("code-map.md")
+    validate_fixture(
+        "standard-code-map-required",
+        missing_code_map,
+        expect_code=1,
+        contains="Missing required file: code-map.md",
+    )
+
+    missing_directory_section = dict(STANDARD_FILES)
+    missing_directory_section["code-map.md"] = missing_directory_section["code-map.md"].replace(
+        """## `tests/`
+
+| Important code | Function | Key symbols | Called by / used by |
+| --- | --- | --- | --- |
+| `tests/test_orders.py` | Verifies accepted and rejected orders. | `test_empty_order` | The order-check behavior and report boundary. |
+
+""",
+        "",
+    )
+    validate_fixture(
+        "code-map-missing-directory-section",
+        missing_directory_section,
+        expect_code=0,
+        contains="missing per-directory sections for: tests/",
+    )
+
+    missing_code_table = dict(STANDARD_FILES)
+    missing_code_table["code-map.md"] = missing_code_table["code-map.md"].replace(
+        """| Important code | Function | Key symbols | Called by / used by |
+| --- | --- | --- | --- |
+| `tests/test_orders.py` | Verifies accepted and rejected orders. | `test_empty_order` | The order-check behavior and report boundary. |
+""",
+        "Tests for this area are described elsewhere.\n",
+        1,
+    )
+    validate_fixture(
+        "code-map-missing-code-table",
+        missing_code_table,
+        expect_code=0,
+        contains="directory sections without an important-code table: tests/",
+    )
+
+    missing_coverage_section = dict(STANDARD_FILES)
+    missing_coverage_section["code-map.md"] = missing_coverage_section["code-map.md"].replace(
+        """## Coverage
+
+Covered: the first-party `src/` implementation and `tests/` verification areas for the order-check path. Generated reports and the unrelated export mode are excluded.
+
+""",
+        "",
+    )
+    validate_fixture(
+        "code-map-missing-coverage-section",
+        missing_coverage_section,
+        expect_code=0,
+        contains="no explicit `## Coverage` section",
+    )
+
+    walkthrough_missing_code_map = dict(STANDARD_FILES)
+    walkthrough_missing_code_map["walkthroughs/one-real-run.md"] = walkthrough_missing_code_map[
+        "walkthroughs/one-real-run.md"
+    ].replace("Use [the code map to locate the implementation](../code-map.md), ", "")
+    validate_fixture(
+        "walkthrough-missing-code-map-route",
+        walkthrough_missing_code_map,
+        expect_code=1,
+        contains="Main walkthrough should route onward to code-map.md",
+    )
 
     bad_reference = dict(STANDARD_FILES)
     bad_reference["references/schema-catalog.md"] = "# Schema Catalog\n\nThis lookup page should be a module instead.\n"

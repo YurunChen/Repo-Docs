@@ -8,6 +8,7 @@ Generated files:
 
 - [README.md](generated/aider/repo-docs/README.md)
 - [walkthroughs/one-real-run.md](generated/aider/repo-docs/walkthroughs/one-real-run.md)
+- [code-map.md](generated/aider/repo-docs/code-map.md)
 - [modules/session-assembly.md](generated/aider/repo-docs/modules/session-assembly.md)
 - [modules/edit-lifecycle.md](generated/aider/repo-docs/modules/edit-lifecycle.md)
 - [references/source-evidence.md](generated/aider/repo-docs/references/source-evidence.md)

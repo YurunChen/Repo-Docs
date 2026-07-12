@@ -13,6 +13,7 @@ repo-docs/
   README.md
   walkthroughs/
     one-real-run.md
+  code-map.md
   modules/
   references/
     source-evidence.md
@@ -58,6 +59,7 @@ Use the same reader-goal shape as the README so the reader sees goals before fil
 | Reader goal | Start here | What this page gives you |
 | --- | --- | --- |
 | Understand the main behavior | [Follow one real run](repo-docs/walkthroughs/one-real-run.md) | The end-to-end behavior trace |
+| Locate the implementation | [Use the code map](repo-docs/code-map.md) | Directory responsibilities, key files or symbols, and the main change points |
 | Clarify the normalized record | [Read the concept model](repo-docs/modules/normalized-record.md) | Why later code reads a stable record, including its important fields |
 | Audit the evidence base | [Check source evidence](repo-docs/references/source-evidence.md) | Source, tests, configs, commands, artifacts, caveats, and page consumers |
 | Decode repeated terms | [Use the glossary](repo-docs/glossary.md) | Project meanings in one place |
@@ -78,6 +80,7 @@ This project [what it does in one or two sentences]. [Why that matters / what re
 | Reader goal | Start here | What this page gives you |
 | --- | --- | --- |
 | Understand the main behavior | [Follow one real run](walkthroughs/one-real-run.md) | A concrete input-to-output trace and the project model behind it |
+| Locate the implementation | [Use the code map](code-map.md) | In-scope directory responsibilities, important code, tests, and likely change points |
 | Clarify core concepts | [Open the concept pages](modules/) | Reader-facing explanations, important details, and examples for ideas introduced by the walkthrough |
 | Audit the evidence base | [Check source evidence](references/source-evidence.md) | Source, tests, configs, commands, artifacts, caveats, and page consumers |
 | Decode repeated terms | [Use the glossary](glossary.md) | Project-specific meanings in one place |
@@ -86,6 +89,37 @@ Evidence status: Confirmed unless noted.
 ````
 
 README always carries this reader-goal table. Use rows that match the generated pages.
+
+## Code Map Skeleton
+
+Use this after the walkthrough has established the behavior. Keep the map scoped and navigational; modules remain the home for detailed mechanisms and representative cases.
+
+````markdown
+# Code Map
+
+This map covers [declared first-party source scope]. Read [how one real request becomes a result](walkthroughs/one-real-run.md) first if the main behavior is not clear yet.
+
+| Path | Responsibility | Key code | Connection to the main path |
+| --- | --- | --- | --- |
+| `src/input/` | Turns external input into the stable record used downstream. | `normalize.py`, `schema.py` | Owns the first handoff in the walkthrough. |
+| `src/process/` | Applies the business steps to the stable record. | `steps.py:run_steps` | Produces the values passed to result writing. |
+| `tests/` | Verifies the main behavior and its rejection boundary. | `test_pipeline.py` | Proves the full path and invalid-input case. |
+
+## `src/input/`
+
+| Important code | Function | Key symbols | Called by / used by |
+| --- | --- | --- | --- |
+| `src/input/normalize.py` | Converts raw input into the stable internal record. | `normalize_input()` | CLI and API entrypoints; verified by `tests/test_input_normalization.py`. |
+| `src/input/schema.py` | Defines the fields later phases may trust. | `InputRecord` | Normalization and processing modules. |
+
+## Coverage
+
+Covered: first-party source used by the documented input-to-result path. Generated assets and vendored dependencies are summarized rather than listed file by file. The admin path is deferred because it does not participate in this workflow.
+
+Read [why the normalized record exists](modules/normalized-record.md) for mechanism detail, or return to [the full runtime sequence](walkthroughs/one-real-run.md).
+
+Evidence status: Confirmed unless noted.
+````
 
 ## Walkthrough Default
 
@@ -244,6 +278,7 @@ This is an audit note for the guide. It checks whether the guide transfers a usa
 | What real path is followed? | [One command, request, task, user action, failure, or data record.] |
 | What is hard or non-trivial? | [The pressure, stated without source names first.] |
 | What changes at each phase? | [The remembered state, output, decision, or handoff.] |
+| Where would I change this behavior? | [The directory, important file or symbol, and nearest verification point from `code-map.md`.] |
 | Where do assumptions stop? | [A real boundary, failure, retry, validation, caveat, or out-of-scope path.] |
 | What would prove this explanation wrong? | [The falsifying source, test, config, artifact, or missing evidence.] |
 | What would a careful newcomer ask next? | [Next page, source evidence, glossary row, verify command, deferred topic, or unknown.] |
@@ -468,6 +503,7 @@ Use this as an internal coverage checklist, or render it when scoping which conc
 - Each durable fact lives in one best home; other pages link to it.
 - Walkthrough: numbered `## Step N: [behavior]` headings; link to the matching `modules/<concept>.md` in the step where that concept appears; add a small flowchart when branches are hard to follow in prose alone; one verify block at page end.
 - README: opening prose followed by a stable `## Reader Routes` table with reader goals, links, and payoffs, including a source-evidence audit row.
+- Code map: scoped directory table followed by important-file tables, explicit exclusions, and links back to the walkthrough or deeper modules.
 - Module: concept-shaped H2 sections; include necessary details, representative snippets, source locators, examples, and caveats where they clarify understanding.
 - References: fixed generated artifacts only: source evidence and optional quality review.
 - Mermaid and tables support prose; the paragraph still carries the reasoning. Use a flowchart when it teaches the model, not when it only repeats the file tree.

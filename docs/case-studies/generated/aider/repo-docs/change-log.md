@@ -1,5 +1,13 @@
 # Change Log
 
+## 2026-07-12 11:55 CST
+
+- Trigger: Add a code-navigation layer after the behavior walkthrough.
+- Scope: Added `code-map.md` for the scoped CLI edit workflow, covering `aider/`, `aider/coders/`, and `tests/basic/` with responsibilities, important code, change points, tests, and explicit exclusions.
+- Changed pages: `README.md`, `walkthroughs/one-real-run.md`, `code-map.md`, `references/source-evidence.md`, and `references/quality-review.md`; updated the public case-study index separately.
+- Verification: Updated repo-docs validator passed with 0 errors and 0 warnings.
+- Synced through 5dc9490bb.
+
 ## 2026-06-29 13:30 CST
 
 - Trigger: Initial `repo-docs` build for the current Aider repository.

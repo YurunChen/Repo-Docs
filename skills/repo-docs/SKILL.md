@@ -9,7 +9,7 @@ description: Build and maintain a Markdown guide that helps humans understand a 
 
 `repo-docs` explains a repository to a human reader.
 
-Do not make a tree tour. Build a reader model: what problem the repo solves, one real behavior it performs, the concepts behind that behavior, where source truth lives, and how to verify the understanding.
+Do not start with a tree tour. Build a reader model first: what problem the repo solves, one real behavior it performs, the concepts behind that behavior, where those responsibilities live in code, where source truth lives, and how to verify the understanding.
 
 ## Load Order
 
@@ -42,10 +42,11 @@ Keep the routing narrow. `SKILL.md` defines the contract; topic files carry the 
 ## Core Laws
 
 - Behavior before inventory: teach one real workflow, request, task, failure, or data path before describing the tree.
+- Code location after behavior: once the reader understands one real path, map every in-scope first-party source directory and the key files or symbols needed to locate changes without repeating module explanations.
 - Representative case before abstraction: when a module explains a mechanism whose meaning depends on inputs, state changes, outputs, decisions, or boundaries, include a compact evidence-backed case or explicitly state why a case would mislead.
 - Shape follows reader need: prose explains why; structure shows what. Use tables, lists, timelines, fenced blocks, or flowcharts when they make comparisons, cases, sequences, commands, or lookup easier to scan.
 - Evidence before claims: inspect source, tests, config, data, commands, or artifacts before writing durable statements.
-- One durable fact, one home: reader knowledge and details live in `modules/`; fixed generated audit artifacts live in `references/`; terms live in `glossary.md`; guide history lives in `change-log.md`.
+- One durable fact, one home: code location lives in `code-map.md`; concept knowledge and mechanism details live in `modules/`; fixed generated audit artifacts live in `references/`; terms live in `glossary.md`; guide history lives in `change-log.md`.
 - Sync only when the guide would mislead: ordinary repo questions require a foreground decision, not automatic doc edits.
 - Validate before delivery: run the validator or state why it could not run.
 
@@ -63,8 +64,8 @@ Red flags that mean stop and re-route:
 
 Use the smallest package that teaches the repo honestly.
 
-- Standard: `README.md`, `walkthroughs/one-real-run.md`, `modules/`, `references/source-evidence.md`, `glossary.md`, `change-log.md`; add `references/quality-review.md` when the guide is source-heavy, high-risk, generated, or handoff-sensitive.
-- Lite: `README.md`, `walkthroughs/one-real-run.md`, `references/source-evidence.md`, `change-log.md`; use for small repos with little durable terminology.
+- Standard: `README.md`, `walkthroughs/one-real-run.md`, `code-map.md`, `modules/`, `references/source-evidence.md`, `glossary.md`, `change-log.md`; add `references/quality-review.md` when the guide is source-heavy, high-risk, generated, or handoff-sensitive.
+- Lite: `README.md`, `walkthroughs/one-real-run.md`, `references/source-evidence.md`, `change-log.md`; use for small repos with little durable terminology. Add `code-map.md` when the small repo still has multiple first-party implementation areas or the reader needs a change-location index.
 - Seed: `README.md`, `change-log.md`, optional `glossary.md`; label facts as `Confirmed`, `Planned`, or `Unknown`.
 
 ## Page Ownership
@@ -73,13 +74,14 @@ Use the smallest package that teaches the repo honestly.
 | --- | --- |
 | `README.md` | Orient the reader and point to the first useful path. |
 | `walkthroughs/one-real-run.md` | Follow one real behavior end to end with numbered `## Step N: behavior` headings. |
+| `code-map.md` | Map in-scope first-party directories to responsibilities, key files or symbols, main-path connections, and change locations after the behavior model is established. |
 | `modules/<concept>.md` | Explain one durable concept named by the walkthrough, including details, representative cases, call/data shapes, commands, fields, caveats, and verification hooks needed to understand it. |
 | `references/source-evidence.md` | Fixed generated evidence base: traversal log, coverage notes, claim/evidence/confidence/caveat rows, and source material later pages may use. |
 | `references/quality-review.md` | Optional fixed generated audit note for source-heavy, high-risk, generated, or handoff-sensitive guides. |
 | `glossary.md` | Three columns only: `Term | Plain meaning | Further reading`. |
 | `change-log.md` | Meaningful guide changes and sync anchors. |
 
-`references/` is not a lookup layer. Do not add extra files there for schemas, contracts, metrics, task catalogs, command lists, scripts, artifacts, or exact-name lookup. If a detail helps understanding, put it in the owning module. If it only proves a claim, put it in `references/source-evidence.md`.
+`references/` is not a lookup layer. Code location belongs in `code-map.md`; do not hide it in an audit artifact. Do not add extra files under `references/` for schemas, contracts, metrics, task catalogs, command lists, scripts, artifacts, or exact-name lookup. If a detail helps understanding, put it in the owning module. If it only proves a claim, put it in `references/source-evidence.md`.
 
 ## Modes
 
@@ -115,7 +117,7 @@ Detailed Build rules live in [PAGE_RULES.md](PAGE_RULES.md#build-workflow). The 
 1. Inspect project instructions, README, entrypoints, scripts, tests, schemas, config, data, artifacts, and existing docs.
 2. Choose one representative real behavior.
 3. Build `references/source-evidence.md` as the evidence base with at least two traversal passes.
-4. Draft the reader model, then write README, walkthrough, modules, glossary, and change log.
+4. Draft the reader model, then write README and the walkthrough; build the code map from the now-understood behavior before writing deeper modules, glossary, and change log.
 5. Wire root agent instructions from [ROOT_AGENT_RULES.md](ROOT_AGENT_RULES.md).
 6. Run the validator and fix structure, links, evidence, references scope, and reading-experience issues.
 
@@ -138,6 +140,7 @@ Before delivery, confirm:
 
 - The reader can start from `repo-docs/README.md` and reach the main walkthrough.
 - `walkthroughs/one-real-run.md` follows one real behavior with numbered steps.
+- Standard packages include `code-map.md`; it covers every first-party source directory inside the declared scope, names the important code inside each area, states exclusions, and routes deeper mechanism questions to modules.
 - The walkthrough names a non-trivial pressure, a real boundary/failure/caveat when evidence exists, and one verification hook.
 - Source links prove the explanation instead of replacing it.
 - `references/source-evidence.md` exists and includes Pass 1/Pass 2 traversal rows, coverage/exclusion notes, a falsifying check, a likely reader follow-up, and a `Claim | Evidence | Confidence | Caveat | Used by` audit table.

@@ -12,7 +12,12 @@ python skills/repo-docs/evals/run_eval.py
 
 | Case | Expected artifacts | Automated assertions | Human check |
 | --- | --- | --- | --- |
-| `standard-build` | README, walkthrough, module, source evidence, glossary, change log | Validator exits with 0 errors; no extra `references/` pages | The guide teaches behavior before inventory. |
+| `standard-build` | README, walkthrough, code map, module, source evidence, glossary, change log | Validator exits with 0 errors; no extra `references/` pages | The guide teaches behavior first, then maps in-scope source responsibilities. |
+| `standard-code-map-required` | Standard fixture with `code-map.md` removed | Validator fails with a missing required file error | Standard packages always preserve the code-navigation layer. |
+| `code-map-missing-directory-section` | Code map lists a directory without its detail section | Validator warns with the uncovered directory path | Every summarized source area gets a navigable responsibility section or split-page link. |
+| `code-map-missing-code-table` | Directory section lacks the important-code table | Validator warns with the affected directory path | Folder purpose is followed by concrete code and symbol locations. |
+| `code-map-missing-coverage-section` | Code map omits its closing coverage section | Validator warns instead of accepting incidental coverage words elsewhere | Scope and exclusions stay explicit. |
+| `walkthrough-missing-code-map-route` | Standard walkthrough does not link onward to the code map | Validator fails with a routing error | The published reading order remains behavior first, code location second. |
 | `lite-build` | README, walkthrough, source evidence, change log | Validator exits with 0 errors under `--lite`; no module directory required | Lite shape does not invent concept pages. |
 | `seed-build` | README, change log, glossary | Validator exits with 0 errors under `--seed` | Planned facts are not described as implemented. |
 | `sync-decision-rules` | Skill rule files | `none`, `answer-only`, `foreground patch`, and `background sync` appear in `SKILL.md`, `SYNC_RULES.md`, and root-agent rules | Ordinary repo questions have an answer-only path. |

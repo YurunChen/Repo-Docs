@@ -43,3 +43,5 @@ The docs are good when a newcomer can answer these in about 15 minutes using the
 11. For case studies, generated examples, source-heavy docs, or handoff-sensitive work, does `references/quality-review.md` record reader-simulation answers, the understandability review, and residual risk?
 12. Does `references/source-evidence.md` record at least two traversal passes and make adjacent out-of-scope paths visible?
 13. Does the guide survive a Socratic reader review: why this phase exists, what would break without it, what evidence could falsify the explanation, where assumptions stop, and what a careful newcomer would ask next?
+14. After learning the main behavior, can a newcomer use `code-map.md` to say what every in-scope first-party source directory owns, which important file or symbol to inspect first, and which test or check verifies a likely change?
+15. Does the code map explicitly distinguish covered source areas from generated, vendored, fixture-only, unrelated, excluded, or deferred areas instead of implying whole-repo coverage?

@@ -2,11 +2,12 @@
 
 ## Reader Paths
 
-The main guide should support three paths:
+The main guide should support these reader paths:
 
 | Reader goal | What the guide should show |
 | --- | --- |
 | Understand quickly | thesis, why it exists, main workflow, and major concepts |
+| Locate or change code | in-scope directory responsibilities, key files or symbols, tests, and the main change points |
 | Reproduce or run | commands, config, expected outputs, artifact locations |
 | Verify understanding | walkthrough verify command, tests named in prose |
 
@@ -16,7 +17,7 @@ Readers also arrive with different expertise, and scaffolding that helps a newco
 | --- | --- | --- |
 | Newcomer | `walkthroughs/one-real-run.md` | connected narrative; plain model before code names |
 | Intermediate | `modules/<concept>.md` | concept plus the details, source locators, examples, and checks needed to understand it |
-| Expert | `modules/` and source locators | minimal path through the concepts, with evidence audit in `references/source-evidence.md` |
+| Expert | `code-map.md`, `modules/`, and source locators | fast source navigation after the behavior model, with evidence audit in `references/source-evidence.md` |
 
 Offer this as a route in `README.md` only, not as repeated per-page banners. A short newcomer path and an expert fast-path that names its payoff, such as jumping directly to the relevant module, let a reader skip pages they do not need.
 
@@ -24,7 +25,7 @@ Offer this as a route in `README.md` only, not as repeated per-page banners. A s
 
 Readers move through the package by following scent: at each link they judge, from the visible label and heading alone, whether the next page is worth the click. The label, not the destination, drives the decision, so a weak label sends readers down the wrong path or makes them give up.
 
-- Every content page (`README.md`, walkthroughs, modules) should route the reader onward to the genuinely next-most-useful page. A page with no onward route is a dead end.
+- Every content page (`README.md`, `code-map.md`, walkthroughs, modules) should route the reader onward to the genuinely next-most-useful page. A page with no onward route is a dead end.
 - Write onward links as natural in-prose links whose label names what the reader gains, not the filename and not the act of clicking. Prefer `see how the request becomes a result in modules/result-flow.md` over `see modules/result-flow.md` or `click here`.
 - Scent is a property of how links are written, not a widget. Do not stamp a "Next" footer on every page; place the onward link where the reader actually needs it.
 - The validator enforces this from the author side: it warns on content pages with no onward link and on low-scent labels (a bare filename or words like `here`, `this`, `see`). These checks add no text to the docs.
@@ -86,7 +87,7 @@ Wall-of-text guard: prose explains why; structure shows what. If a paragraph car
 Do not frame output as a file-count exercise. Use this rule:
 
 ```text
-project spine -> real trace -> readable concept pages -> evidence audit -> glossary -> change log
+project spine -> real trace -> code map -> readable concept pages -> evidence audit -> glossary -> change log
 ```
 
 The first-read route for most non-Seed repos should be:
@@ -94,6 +95,7 @@ The first-read route for most non-Seed repos should be:
 ```text
 README.md
 -> walkthroughs/one-real-run.md
+-> code-map.md
 -> modules
 -> references/source-evidence.md when auditing evidence
 -> glossary.md
@@ -106,6 +108,7 @@ Each named page serves a durable reader job. The output should feel concise beca
 | Understand the project idea and reading route | `README.md` |
 | Understand the project model | `README.md` and `walkthroughs/one-real-run.md` |
 | Replay one real behavior | `walkthroughs/one-real-run.md` |
+| Locate responsibilities and likely change points in source | `code-map.md` |
 | Understand a concept introduced by the walkthrough, including its important details | `modules/<concept>.md` |
 | Audit evidence or residual quality risk | `references/source-evidence.md` or `references/quality-review.md` |
 | Resolve project terminology | `glossary.md` |
@@ -114,7 +117,7 @@ Each named page serves a durable reader job. The output should feel concise beca
 
 The canonical non-Seed shape is defined in [SKILL.md](SKILL.md); this section governs which reader job each page serves and when triggered pages appear.
 
-Additional walkthroughs, module pages, and `flows.md` are governed by reader-problem triggers: multiple workflows, multiple runtime phases, state transitions, rule cases, failure modes, or concepts that need deeper explanation. Use trigger language rather than file-count language.
+Additional walkthroughs, module pages, split `code-map/` pages, and `flows.md` are governed by reader-problem triggers: multiple workflows, independently navigated source areas, multiple runtime phases, state transitions, rule cases, failure modes, or concepts that need deeper explanation. Use trigger language rather than file-count language.
 
 Merge pages when they explain the same reader concept. Do not merge merely to reduce file count.
 
@@ -129,20 +132,51 @@ Build starts from evidence and ends with a guide a future reader can use without
 3. Create `references/source-evidence.md` immediately after choosing the representative behavior. This is a fixed generated intermediate artifact for the guide, not a reader-facing lookup page.
 4. Run at least two evidence passes, updating `references/source-evidence.md` after each meaningful source inspection:
    - Pass 1 maps the main path: real entrypoints, real inputs, output or state changes, major handoffs, and first source locators.
-   - Pass 2 challenges and fills the model with a Socratic reader interrogation: why each phase exists, what would break without it, what evidence could falsify the explanation, where assumptions stop, and which source area the first path skipped but depends on.
+   - Pass 2 challenges and fills the model with a Socratic reader interrogation: why each phase exists, what would break without it, what evidence could falsify the explanation, where assumptions stop, and which source area the first path skipped but depends on. It also inventories first-party source directories inside the declared scope so the code map can mark each area covered, excluded with a reason, or deferred.
    Add more passes only when the model still has unexplained gaps.
 5. Draft the understanding brief from `references/source-evidence.md` before writing pages. The brief must name a real scenario, input, output, hard part, boundary or failure, falsifying check, likely reader follow-up, and the evidence for each claim.
 6. Write `README.md` and `walkthroughs/one-real-run.md` from the understanding brief and evidence base. If the brief cannot name those fields, re-inspect source before writing the walkthrough.
-7. Add modules for concepts, mechanisms, contracts, commands, data shapes, or caveats the walkthrough cannot explain cleanly inline. When a stable knowledge gap or understanding gap appears, resolve it by adding a focused module, refining the owning module, or merging overlapping modules so the reader still has one durable home for that concept. For mechanism-heavy modules, draft one representative case before polishing the prose: what goes in, what changes or gets decided, what comes out, and what boundary or failure variant matters.
-8. Do not create extra `references/` pages. Schemas, metrics, tool parameters, task catalogs, scripts, artifacts, baseline methods, command lists, and exact-name lookup belong in the owning module when they matter to understanding.
-9. Run an understandability review before delivery. For case studies, generated examples, source-heavy docs, or handoff-sensitive work, write it as `references/quality-review.md`, the second fixed generated artifact.
-10. Add `glossary.md` and `change-log.md`.
-11. Wire the guide into the project's agent instruction Markdown using [ROOT_AGENT_RULES.md](ROOT_AGENT_RULES.md).
-12. Run the validator and fix structure, link, evidence, references-scope, and reading-experience problems.
+7. Write `code-map.md` after the walkthrough has established the behavior. Cover every in-scope first-party source directory, identify the important files or symbols inside each area, connect them to the main path, and state what is excluded. Use the [Code Map Gate](#code-map-gate) for Standard, Lite, Seed, and large-repo scope.
+8. Add modules for concepts, mechanisms, contracts, commands, data shapes, or caveats the walkthrough cannot explain cleanly inline. When a stable knowledge gap or understanding gap appears, resolve it by adding a focused module, refining the owning module, or merging overlapping modules so the reader still has one durable home for that concept. For mechanism-heavy modules, draft one representative case before polishing the prose: what goes in, what changes or gets decided, what comes out, and what boundary or failure variant matters.
+9. Do not create extra `references/` pages. Schemas, metrics, tool parameters, task catalogs, scripts, artifacts, baseline methods, command lists, and exact-name lookup belong in the owning module when they matter to understanding. Source navigation belongs in `code-map.md`.
+10. Run an understandability review before delivery. For case studies, generated examples, source-heavy docs, or handoff-sensitive work, write it as `references/quality-review.md`, the second fixed generated artifact.
+11. Add `glossary.md` and `change-log.md`.
+12. Wire the guide into the project's agent instruction Markdown using [ROOT_AGENT_RULES.md](ROOT_AGENT_RULES.md).
+13. Run the validator and fix structure, link, evidence, references-scope, and reading-experience problems.
 
 For large repos or monorepos, scope the guide to one subsystem or workflow and say what is not covered.
 
 Build is not finished until the next coding agent can maintain the guide without rediscovering the policy. The project agent instruction Markdown is the handoff point: it should point to `repo-docs/README.md`, name the main walkthrough, and tell future agents to read the guide plus current source for repo questions and run the sync decision gate before answering.
+
+## Code Map Gate
+
+**Behavior first, code map second.** The walkthrough gives paths meaning; `code-map.md` then turns that model into source navigation. A code map answers “where does this responsibility live?” and “where should I start this kind of change?” It does not replace the walkthrough with a file inventory or repeat a module's mechanism explanation.
+
+Use this gate by package mode:
+
+| Mode | Code-map rule |
+| --- | --- |
+| Standard | Required. Cover every first-party source directory inside the guide's declared scope. |
+| Lite | Add `code-map.md` when the repo has multiple first-party implementation areas or a reader cannot locate the main change points from the walkthrough alone. |
+| Seed | Omit it until implemented source responsibilities can be confirmed. |
+| Large repo / monorepo | Map the selected subsystem or workflow boundary, then name each adjacent first-party source area as covered, excluded with a reason, or deferred. Do not imply whole-repo coverage. |
+
+Build the page in this order:
+
+1. Open with the declared source scope and the behavior a reader should understand first.
+2. Add a compact directory table: `Path | Responsibility | Key code | Connection to the main path` (Chinese: `路径 | 职责 | 关键代码 | 与主流程的关系`). Each responsibility must make sense without relying on the path name.
+3. Add one section per in-scope first-party source directory. Use a compact table such as `Important code | Function | Key symbols | Called by / used by`, and include the nearest test or verification point when it materially helps a reader choose where to edit.
+4. End with an explicit coverage note. Name generated, vendored, cached, fixture-only, asset-only, or unrelated areas that were intentionally summarized or excluded, and why.
+5. Route deeper “why/how” questions to the owning module and route the runtime sequence back to the walkthrough.
+6. End with the normal page-level evidence status.
+
+Coverage depth follows repo size:
+
+- Small repository: cover every first-party source directory and every meaningful implementation file; group only generated, vendored, fixture-only, or repetitive files.
+- Medium repository: cover every first-party top-level source directory and the important nested directories, files, symbols, and tests that own the documented behaviors.
+- Large repository or monorepo: cover every first-party source directory inside the declared subsystem boundary; list adjacent areas with explicit exclusion or deferral reasons.
+
+List a file or symbol because it helps a reader locate a responsibility or change, not merely because it exists. Keep detailed fields, algorithms, contracts, and representative cases in the owning module. When the map grows beyond roughly 120 lines or independently developed subsystems have separate readers, keep `code-map.md` as the index and split details into `code-map/<subsystem>.md`.
 
 ### Lite shape
 
@@ -159,6 +193,8 @@ repo-docs/
 ```
 
 This is the same explanation path with fewer pages. Validate it with `python scripts/validate_repo_docs.py <path> --lite`. Promote to the full structure when the repo grows a concept worth its own module page.
+
+When the Lite code-map gate fires, add `code-map.md` beside `README.md`; it does not require promoting the package merely because a small repo has multiple implementation areas.
 
 ## Large And Monorepo Scope
 
@@ -180,7 +216,7 @@ Reader understanding:
 observable behavior -> plain concept -> why it matters -> source locator -> verification
 ```
 
-After choosing the representative behavior, create `references/source-evidence.md` as a living evidence ledger. Start with the traversal-log heading and the claim table, then update rows during source inspection. Build it with at least two passes over the evidence: first map the main behavior path, then revisit the repo with a Socratic reader interrogation to find missed guards, failures, tests, config precedence, artifacts, dependencies, falsifying evidence, and assumptions that could change the reader's model. The page acts as the evidence base for README, walkthroughs, modules, glossary, and quality review:
+After choosing the representative behavior, create `references/source-evidence.md` as a living evidence ledger. Start with the traversal-log heading and the claim table, then update rows during source inspection. Build it with at least two passes over the evidence: first map the main behavior path, then revisit the repo with a Socratic reader interrogation to find missed guards, failures, tests, config precedence, artifacts, dependencies, falsifying evidence, and assumptions that could change the reader's model. The page acts as the evidence base for README, walkthroughs, the code map, modules, glossary, and quality review:
 
 | Brief field | Requirement |
 | --- | --- |
@@ -200,7 +236,7 @@ Add an `## Evidence Traversal Log` section before the claim table:
 | Pass | Purpose | Inspected evidence | What changed in the model |
 | --- | --- | --- | --- |
 | Pass 1 | Main path | Entrypoint, input, output/state, first handoffs | The initial behavior model. |
-| Pass 2 | Socratic challenge/fill | Failures, retries, validation, config precedence, tests, artifacts, adjacent dependencies, falsifying checks | Boundaries, caveats, reader follow-ups, and scope corrections. |
+| Pass 2 | Socratic challenge/fill | Failures, retries, validation, config precedence, tests, artifacts, adjacent dependencies, in-scope source directories, falsifying checks | Boundaries, caveats, reader follow-ups, source-area coverage, and scope corrections. |
 
 Add Pass 3+ only when needed. Also include a short coverage note naming adjacent paths that were checked but not traced, and why they are out of scope for the current guide.
 
@@ -249,6 +285,7 @@ Default simulation table:
 | What real path is followed? | The command, request, task, user action, failure, or data record the guide tracks. |
 | What is hard or non-trivial? | The pressure the repo must handle, stated without source names first. |
 | What changes at each phase? | The state, output, decision, or handoff a reader should remember. |
+| Where would I change this behavior? | The in-scope directory, important file or symbol, and nearest verification point named by `code-map.md`. |
 | Where do assumptions stop? | A real boundary, failure, retry, validation, caveat, or out-of-scope path. |
 | What would prove this explanation wrong? | The falsifying source, test, config, artifact, or missing evidence that would change the model. |
 | What would a careful newcomer ask next? | The next guide page, source-evidence audit, glossary row, verify command, deferred topic, or unknown. |
@@ -263,6 +300,7 @@ Ask at least these questions:
 
 - Can a reader state the hard part of the main path in one sentence?
 - Can the walkthrough still explain the flow if source links are hidden?
+- Can a reader use `code-map.md` to locate the owning source area and a verification point without scanning the repository tree?
 - Does each step start with observable behavior, pressure, or effect before source names?
 - Is there at least one real boundary, failure, retry, validation, or caveat path when evidence exists?
 - Are claims backed by `references/source-evidence.md`, tests, commands, configs, data, or artifacts?
@@ -281,6 +319,7 @@ Design document types by reader state, not by source-tree structure:
 | "I do not understand this project yet." | Natural first model and next step. | `README.md` |
 | "I want to understand the project idea." | A plain model of the problem, main behavior, and caveats. | README and the main walkthrough |
 | "Show me one real thing working." | A worked example with observable behavior and state changes. | `walkthroughs/one-real-run.md` |
+| "Where does this responsibility live, and where should I start changing it?" | Scoped directory responsibilities, important files or symbols, related tests, and explicit exclusions. | `code-map.md` |
 | "I understand the behavior, but this concept is still fuzzy." | Concept explanation, necessary details, representative evidence, and where to read next. | `modules/*.md` |
 | "I need the exact shape to understand the concept." | Fields, commands, schemas, tools, metrics, artifacts, call shapes, and examples. | `modules/*.md` |
 | "These project terms blur together." | Plain meaning for this project, with little or no code. | `glossary.md` |
@@ -311,6 +350,7 @@ Put caveats in a short closing note with compact bullets when needed.
 Reader paths should be obvious from the table:
 
 - New readers follow the main walkthrough.
+- Readers locating or changing code use `code-map.md` after they understand the main behavior.
 - Details needed for understanding live in `modules/`.
 - Evidence audit lives in `references/source-evidence.md`.
 - Repeated terms live in `glossary.md`.

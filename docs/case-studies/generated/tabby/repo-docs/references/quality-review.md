@@ -9,6 +9,7 @@ This is an audit note. It checks whether the guide transfers a usable reader mod
 | What real path is followed? | A `tabby serve` server handles a POST to `/v1/completions` and returns completion JSON. |
 | What is hard or non-trivial? | The server must turn editor state into a model prompt while optional retrieval context, line-ending style, route availability, and debug switches can change the path. |
 | What changes at each phase? | CLI/config creates the service, the router adds request context, the service chooses raw prompt or segments, optional snippets enter the prefix, the prompt is templated, the model output is logged and returned. |
+| Where would I change this behavior? | [`code-map.md`](../code-map.md) routes startup to `crates/tabby/src/`, HTTP adaptation to `routes/`, completion logic to `services/`, prompt enrichment to `services/completion/`, and verification to `crates/tabby/tests/`. |
 | Where do assumptions stop? | Missing prompt material returns `400`; no completion model returns `501`; retrieval errors return no snippets and allow completion to continue. |
 | What would prove this explanation wrong? | Changes in `CompletionService::generate`, `PromptBuilder::collect`, route status mapping, or completion config defaults that contradict the documented flow. |
 | What would a careful newcomer ask next? | How repositories are indexed before retrieval can work. The guide defers that path and labels it out of scope. |

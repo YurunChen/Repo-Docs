@@ -107,6 +107,7 @@ flowchart LR
 | --- | --- |
 | `repo-docs/README.md` | 帮读者定位项目，并指向第一条有用路径。 |
 | `walkthroughs/one-real-run.md` | 沿着一条真实行为，从入口讲到输出。 |
+| `code-map.md` | 说明范围内源码目录的职责、重要代码、相关测试和常见修改入口。 |
 | `modules/` | 解释 walkthrough 中出现的稳定概念。 |
 | `references/` | 保存源码证据和可选质量检查。 |
 | `glossary.md` | 把项目内重复术语翻译成白话。 |

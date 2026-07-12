@@ -56,4 +56,6 @@ pnpm run test
 python path/to/repo-docs-skill/scripts/validate_repo_docs.py repo-docs --repo-root .
 ```
 
+Use [the web chat code map](../code-map.md) to locate the browser, route, context, stream, and provider-registry source areas behind this run.
+
 Evidence status: Confirmed unless noted.
